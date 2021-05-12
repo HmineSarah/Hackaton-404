@@ -14,52 +14,72 @@ function CharacterDisplay () {
 
 const [blob, setBlob] = useState ([]);
 //const [userRobot, setUserRobot] = useState ([]);
-
+const [url, setUrl] = useState()
 const [message, setMessage] = useState("");
+const [robotName, setRobotName] = useState()
 
 
-let randomString =  getRandomString(4)
-let randomUrl = "https://robohash.org/"+ randomString +".png"
+
 function fetchRobot () {
-
-    fetch(randomUrl)
+  
+  let randomUrl = "https://robohash.org/"+ robotName.name.first + robotName.name.last +".png"
+  
+  fetch(randomUrl)
     .then(res => (res.blob()))
-      .then((data) => {
-        setBlob(URL.createObjectURL(data));
-      });
+    .then((data) => {
+      setBlob(URL.createObjectURL(data));
+    });
+}
+
+function fetchName () {
+  console.log('fetchName');
+  fetch("https://randomuser.me/api/")
+    .then(res => res.json())
+    .then(data => setRobotName({
+      name: data.results[0].name,
+      gender: data.results[0].gender
+    }) )
 }
 
 const handleClick = (e) => {
-//e.preventDefault();
-//setUserRobot(userRobot)
-userRobot.push(randomUrl);
-console.log("UserRobot:",userRobot);
-console.log("UserRobot[0]:",userRobot[0]);
-setMessage(getRandomString(4));
-fetchRobot();
+  //e.preventDefault();
+  //setUserRobot(userRobot)
+  userRobot.push(robotName);
+  console.log("UserRobot:",userRobot);
+  console.log("UserRobot[0]:",userRobot[0]);
+  fetchName()
 }
+
+
 
 /*function robotLike () {
 return (
-        userRobot.map(url => (
-            randomUrl = url
-                this.fetchRobot()   )
- )
- )
-     }*/
+     userRobot.map(url => (
+         randomUrl = url
+             fetchRobot()   )
+ ))}*/
 
 
 
-useEffect(() => {
-     randomString =  getRandomString(4);
-   fetchRobot();
+  useEffect(() => {
+     //randomString =  getRandomString(4);
+   fetchName();
   }, []);
 
+  useEffect(() => {
+    if(robotName) {
+      fetchRobot()
+      console.log(robotName);
+    }
+  }, [robotName])
+
   return (
-    <div className="App">   
+    <div className="App">
+      <button onClick={() => fetchName()}>NEXT !</button>   
          <img src={blob} alt=""/>
-         <button type="button" onClick={handleClick} >HO YEAH</button>
+         
+         <button type="button" onClick={() => handleClick()} >HO YEAH</button>
     </div>
   );
-  }
+}
 export default CharacterDisplay;
